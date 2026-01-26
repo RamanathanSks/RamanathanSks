@@ -1,152 +1,146 @@
 import { Injectable } from '@angular/core';
 import { AngularFireStorage } from "@angular/fire/compat/storage";
 import { AngularFirestore, AngularFirestoreCollection } from "@angular/fire/compat/firestore";
-import { Observable, Subscriber } from 'rxjs';
+import { Observable, of, from } from 'rxjs';
+import { map, shareReplay, tap, catchError } from 'rxjs/operators';
 import { CARDS, GALLERY } from './Model/interface';
 import { TILES } from './Model/interface';
 import { IMAGELST } from './Model/interface';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-
-
 @Injectable({
   providedIn: 'root'
 })
-
 export class ImageserviceService {
   onFirstLoad: boolean = true;
+  feedbackNotify: boolean = true;
+
+  // Local data stores (kept for synchronous access compatibility)
   carouselImgList: GALLERY[] = [];
   tilesImgList: TILES[] = [];
   imageList: IMAGELST[] = [];
-  cardsimgList: CARDS[] = [];
-  feedbackNotify:boolean=true;
-  CardObs!: Observable<any>;
-  CarouselObs!: Observable<any>;
-  TitleObs!: Observable<any>;
-  ImageObs!: Observable<any>;
+  cardsimgList: any[] = []; // Typed as any to include 'id' field
 
-  GalleryCol: AngularFirestoreCollection;
-  TilesCol: AngularFirestoreCollection;
-  ImageCol: AngularFirestoreCollection;
-  CardsCol: AngularFirestoreCollection;
+  // Observables
+  private carousel$: Observable<boolean>;
+  private tiles$: Observable<boolean>;
+  private image$: Observable<boolean>;
+  private cards$: Observable<boolean>;
+
+  // Collections
+  GalleryCol: AngularFirestoreCollection<GALLERY>;
+  TilesCol: AngularFirestoreCollection<TILES>;
+  ImageCol: AngularFirestoreCollection<IMAGELST>;
+  CardsCol: AngularFirestoreCollection<CARDS>;
+
   constructor(private firedb: AngularFirestore, private _snackBar: MatSnackBar) {
-    this.GalleryCol = this.firedb.collection('gallery');
-    this.TilesCol = this.firedb.collection('tiles');
-    this.ImageCol = this.firedb.collection('image');
-    this.CardsCol = this.firedb.collection('cards');
+    this.GalleryCol = this.firedb.collection<GALLERY>('gallery');
+    this.TilesCol = this.firedb.collection<TILES>('tiles');
+    this.ImageCol = this.firedb.collection<IMAGELST>('image');
+    this.CardsCol = this.firedb.collection<CARDS>('cards');
+
+    // Initialize cached streams
+    this.carousel$ = this.initCollection(this.GalleryCol, this.carouselImgList);
+    this.tiles$ = this.initCollection(this.TilesCol, this.tilesImgList);
+    this.image$ = this.initCollection(this.ImageCol, this.imageList);
+    
+    // Cards collection with ID field for robust updates
+    this.cards$ = this.CardsCol.valueChanges({ idField: 'id' }).pipe(
+      tap((data: any[]) => {
+        this.cardsimgList.length = 0;
+        this.cardsimgList.push(...data);
+      }),
+      map(() => true),
+      shareReplay(1),
+      catchError(error => {
+        console.error('Error fetching cards:', error);
+        return of(false);
+      })
+    );
   }
 
-  //Image service
-  getCarouselObs$(): Observable<GALLERY> {
-    return new Observable<any>(obs => {
-      this.GalleryCol.valueChanges().subscribe(gal => {
-        var carouselObj: any[] = gal;
-        if (this.carouselImgList.length == 0) {
-          carouselObj.map(img => {
-            this.carouselImgList.push(img);
-          });
-        }
-        // console.log(this.carouselImgList);
-        obs.next(true);
-      }, error => {
-        console.log(error.message);
-        obs.error(false);
+  // Helper to create a cached observable that updates a local array
+  private initCollection<T>(collection: AngularFirestoreCollection<T>, targetList: T[]): Observable<boolean> {
+    return collection.valueChanges().pipe(
+      tap((data: T[]) => {
+        targetList.length = 0;
+        targetList.push(...data);
+      }),
+      map(() => true),
+      shareReplay(1),
+      catchError(error => {
+        console.error('Error fetching collection:', error);
+        return of(false);
       })
-    });
+    );
   }
+
+  // --- Carousel Methods ---
+  getCarouselObs$(): Observable<any> {
+    return this.carousel$;
+  }
+
   getCarousel(): GALLERY[] {
     return this.carouselImgList;
   }
 
-
-  getTitlesObs$(): Observable<TILES> {
-    return new Observable<any>(obs => {
-      this.TilesCol.valueChanges().subscribe(til => {
-        var titleObj: any[] = til;
-        if (this.tilesImgList.length == 0) {
-          titleObj.map(img => {
-            this.tilesImgList.push(img);
-          });
-        }
-        // console.log(this.tilesImgList);
-        obs.next(true);
-      }, error => {
-        console.log(error.message);
-        obs.error(false);
-
-      })
-    })
+  // --- Titles Methods ---
+  getTitlesObs$(): Observable<any> {
+    return this.tiles$;
   }
+
   getTitles(): TILES[] {
     return this.tilesImgList;
   }
 
-
-  getImgageObs$(): Observable<IMAGELST> {
-    return new Observable<any>(obs => {
-      this.ImageCol.valueChanges().subscribe(img => {
-        var imageObj: any[] = img;
-        if (this.imageList.length == 0) {
-          imageObj.map(img => {
-            this.imageList.push(img);
-          });
-        } 
-        // console.log(this.imageList);
-        obs.next(true);
-      }, error => {
-        console.log(error.message);
-        obs.error(false);
-      })
-    });
+  // --- Image Methods ---
+  getImgageObs$(): Observable<any> {
+    return this.image$;
   }
+
   getimgageLst(): IMAGELST[] {
     return this.imageList;
   }
 
-  getCardImgObs$(): Observable<CARDS> {
-    return new Observable<any>(obs => {
-      this.CardsCol.valueChanges().subscribe(card => {
-        var cardObj: any[] = card;
-        if (this.cardsimgList.length === 0) {
-          cardObj.map(img => {
-            this.cardsimgList.push(img);
-          })
-        }
-        // console.log(this.cardsimgList);
-        obs.next(true);
-      }, error => {
-        console.log(error.message);
-        obs.error(false);
-      })
-    });
+  // --- Card Methods ---
+  getCardImgObs$(): Observable<any> {
+    return this.cards$;
   }
 
   getCardImg(): CARDS[] {
     return this.cardsimgList;
   }
 
-  updateCardImgObs(cardList:CARDS[]):Observable<boolean>{
-    
-    
-    return new Observable<boolean>(obs=>{
-      this.cardsimgList.forEach(i=>{
-        var ind=this.cardsimgList.indexOf(i);
-        var doc="ca_img"+(ind+1);
-        // console.log((cardList[ind].color==="warn"));
-        
-        if(cardList[ind].color==="warn"){
-          i.color="none";
-          // console.log("Updating...");
-          // console.log(i);
-          this.CardsCol.doc(doc).update(i).then((upd)=>{
-            // console.log(upd);
-          });
-        }
-      })
-      // this.CardsCol.doc()
-    })
-  }
+  updateCardImgObs(cardList: CARDS[]): Observable<boolean> {
+    const updatePromises: Promise<void>[] = [];
 
+    // Iterate over the local list which contains the 'id' field
+    this.cardsimgList.forEach((item: any) => {
+      if (item.color === "warn") {
+        const { id, ...data } = item;
+        
+        // Reset color to none
+        item.color = "none";
+        const updateData = { ...data, color: "none" };
+
+        if (id) {
+          updatePromises.push(this.CardsCol.doc(id).update(updateData));
+        }
+      }
+    });
+
+    if (updatePromises.length === 0) {
+      return of(true);
+    }
+
+    return from(Promise.all(updatePromises)).pipe(
+      map(() => true),
+      catchError(err => {
+        console.error("Error updating cards:", err);
+        return of(false);
+      })
+    );
+  }
 
   openSnackBar(message: string) {
     this._snackBar.open(message, "", {
@@ -154,30 +148,7 @@ export class ImageserviceService {
     });
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  //service
+  // --- Utils ---
   getMobileOperatingSystem() {
     var userAgent = navigator.vendor;
     if (/windows phone|window|android/i.test(navigator.userAgent)) {
@@ -188,6 +159,7 @@ export class ImageserviceService {
     }
     return "unknown";
   }
+
   getMobileorDeskyopSystem() {
     var userAgent = navigator.vendor;
     if (/windows|window|/i.test(navigator.userAgent)) {
@@ -199,5 +171,3 @@ export class ImageserviceService {
     return "unknown";
   }
 }
-
-

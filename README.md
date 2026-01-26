@@ -1,59 +1,104 @@
-# RamanathanSksV2
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.1.
+# Ramanathan Sks - Portfolio
 
-## Development server
+This is the source code for my personal portfolio, showcasing my skills, projects, and experiences. The project is built using **Angular 16**, integrated with **Firebase** for hosting and backend services, and **Node.js** for server-side functionality.
 
-To start a local development server, run:
+## 🚀 Deployed Application
 
-```bash
-ng serve
+You can view the live version of my portfolio here: [RamanathanSks 👀](https://ramanathan-sks.web.app)
+
+---
+
+## 👨‍💻 Tech Stack
+
+- **Frontend**: Angular 16
+- **Backend**: Node.js
+- **Database**: Firebase Firestore
+- **Hosting**: Firebase Hosting
+- **Other Integrations**: Firebase Cloud Functions
+
+---
+
+## 📂 Project Structure
+
+```
+|-- src/
+|   |-- app/
+|   |   |-- components/      # Angular components
+|   |   |-- services/        # Angular services
+|   |-- assets/              # Static assets
+|   |-- environments/        # Environment configurations
+|-- functions/               # Node.js Cloud Functions
+|-- firebase.json            # Firebase configuration
+|-- angular.json             # Angular CLI configuration
+|-- package.json             # Project dependencies
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## 🔧 Setup and Installation
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/<your-username>/ramanathan-sks-portfolio.git
+   cd ramanathan-sks-portfolio
+   ```
 
-```bash
-ng generate component component-name
-```
+2. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+3. **Set Up Firebase**
+   - Create a Firebase project at [Firebase Console](https://console.firebase.google.com/).
+   - Add your Firebase configuration to `src/environments/environment.ts`:
+     ```typescript
+     export const environment = {
+       production: false,
+       firebase: {
+         apiKey: "your-api-key",
+         authDomain: "your-auth-domain",
+         projectId: "your-project-id",
+         storageBucket: "your-storage-bucket",
+         messagingSenderId: "your-messaging-sender-id",
+         appId: "your-app-id",
+       },
+     };
+     ```
 
-```bash
-ng generate --help
-```
+4. **Run Locally**
+   ```bash
+   ng serve
+   ```
 
-## Building
+   The app will run at `http://localhost:4200`.
 
-To build the project run:
+5. **Deploy to Firebase**
+   - Build the project:
+     ```bash
+     ng build --prod
+     ```
+   - Deploy to Firebase:
+     ```bash
+     firebase deploy
+     ```
 
-```bash
-ng build
-```
+---
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## 🌟 Features
 
-## Running unit tests
+- Interactive UI built with Angular 16.
+- Hosted on Firebase for fast and reliable delivery.
+- Firebase Firestore for real-time database needs.
+---
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## 🛡 License
 
-```bash
-ng test
-```
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## 🙋🏻‍♂️ Author
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+**Ramanathan Sks**  
+Feel free to reach out via [LinkedIn](https://www.linkedin.com/in/ramanathan-sks) or email at `ramanathan.sks@gmail.com`.

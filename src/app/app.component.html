@@ -1,237 +1,151 @@
-<html>
-<!-- SideNav Content -->
-<mat-sidenav-container>
-    <mat-sidenav (mouseleave)="sidenav.toggle()" #sidenavList class="sidenavList" #sidenav role="navigation" mode="over"
-        position="start">
+<div class="app-root">
+  <!-- SideNav Content -->
+  <mat-sidenav-container>
+    <mat-sidenav
+      #sidenav
+      (mouseleave)="sidenav.toggle()"
+      class="sidenavList"
+      role="navigation"
+      mode="over"
+      position="start"
+    >
+      <div style="height: 100px"></div>
+      <!-- SideNav List -->
+      <mat-list>
+        <mat-list-item matRipple class="parent">
+          <a class="sidelink" routerLink="" (click)="sidenav.close()">
+            <mat-icon class="sidenavIcon">home</mat-icon>
+            <span class="full-width">HOME</span>
+          </a>
+        </mat-list-item>
 
-        <div style="height: 200px;"></div>
-        <!-- SideNav List -->
-        <mat-list>
-            <mat-divider></mat-divider>
-            <br>
-            <mat-list-item matRipple class="parent">
-                <div mat-line class="sidelink" routerLink=''>
-                    <span mat-list-icon><img class="iconimg sidenavIcon" draggable="false"
-                            src="https://img.icons8.com/plumpy/25/000000/home-page.png" />&nbsp;</span>
-                    <span class="full-width">HOME</span>
-                </div>
-            </mat-list-item>
+        <mat-list-item matRipple class="parent">
+          <a class="sidelink" routerLink="Gallery" (click)="sidenav.close()">
+            <mat-icon class="sidenavIcon">collections</mat-icon>
+            <span class="full-width">GALLERY</span>
+          </a>
+        </mat-list-item>
 
-            <mat-list-item matRipple class="parent">
+        <mat-list-item matRipple class="parent">
+          <a class="sidelink" routerLink="About" (click)="sidenav.close()">
+            <mat-icon class="sidenavIcon">person</mat-icon>
+            <span class="full-width">ABOUT</span>
+          </a>
+        </mat-list-item>
 
-                <div mat-line class="sidelink" routerLink='Gallery'>
-                    <span mat-list-icon><img class="iconimg sidenavIcon" draggable="false"
-                            src="https://img.icons8.com/plumpy/25/000000/image-gallery.png" />&nbsp;</span>
-                    <span class="full-width">GALLERY</span>
-                </div>
-            </mat-list-item>
-
-            <mat-list-item matRipple class="parent">
-
-                <div mat-line class="sidelink" routerLink='About'>
-                    <span mat-list-icon><img class="iconimg sidenavIcon" draggable="false"
-                            src="https://img.icons8.com/plumpy/25/000000/about.png" />&nbsp;</span>
-                    <span class="full-width">ABOUT</span>
-
-                </div>
-            </mat-list-item>
-
-            <mat-list-item matRipple>
-
-                <div mat-line class="sidelink" (click)="OpenNFTSheet()">
-                    <span mat-list-icon><img class="iconimg sidenavIcon" draggable="false"
-                            src="https://img.icons8.com/pastel-glyph/25/000000/nft.png" />&nbsp;</span>
-                    <span class="full-width">NFT</span>
-                </div>
-            </mat-list-item>
-
-            <mat-list-item matRipple>
-
-                <div mat-line class="sidelink" (click)="Connect()">
-                    <span mat-list-icon><img class="iconimg sidenavIcon" draggable="false"
-                            src="https://img.icons8.com/plumpy/25/000000/mail-contact.png" />&nbsp;</span>
-                    <span class="full-width">CONTACT </span>
-                </div>
-            </mat-list-item>
-
-
-        </mat-list>
-        <br>
-        <mat-divider></mat-divider>
-
-        <br />
-        <!-- Siednav Footer -->
-        <footer>
-            <div class="container">
-
-                <span class="text-muted">
-                    <a class="sidenavSM" target="_blank" [href]="githuburl">
-                        <img src="https://img.icons8.com/fluent/35/000000/github.png" draggable="false"
-                            class="iconimg" />
-                    </a>
-                </span>&nbsp;&nbsp;
-                <span class="text-muted">
-                    <a class="sidenavSM" target="_blank" [href]="twitterurl">
-                        <img src="https://img.icons8.com/fluent/42/000000/twitterx.png" draggable="false"
-                            class="iconimg" />
-                    </a>
-                </span>&nbsp;&nbsp;
-                <span class="text-muted">
-                    <a class="sidenavSM" target="_blank" [href]="instagramurl">
-                        <img src="https://img.icons8.com/fluent/35/000000/instagram-new.png" draggable="false"
-                            class="iconimg" />
-                    </a>
-                </span>&nbsp;&nbsp;
-                <span class="text-muted">
-                    <a class="sidenavSM" target="_blank" [href]="facebookurl">
-                        <img src="https://img.icons8.com/fluent/35/000000/facebook-new.png" draggable="false"
-                            class="iconimg" />
-                    </a>
-                </span>&nbsp;&nbsp;
-                <span class="text-muted">
-                    <a class="sidenavSM" target="_blank" [href]="fhpixurl">
-                        <img src="https://img.icons8.com/windows/30/000000/500px-new.png" draggable="false"
-                            class="iconimg" />
-                    </a>
-                </span>
-            </div>
-        </footer>
+        <mat-list-item matRipple>
+          <a class="sidelink" (click)="Connect(); sidenav.close()">
+            <mat-icon class="sidenavIcon">alternate_email</mat-icon>
+            <span class="full-width">CONTACT</span>
+          </a>
+        </mat-list-item>
+      </mat-list>
     </mat-sidenav>
 
-
-    <!-- Toolbar -->
     <mat-sidenav-content>
-        <mat-toolbar class="toolbar mat-elevation-z6" *ngIf="offsetFlag" matRipple>
-            <!-- SideNav Menu -->
-            <div>
-                <button mat-icon-button (mouseenter)="sidenav.toggle()">
-                    <img draggable="false" class="iconimg menuicon"
-                        src="https://img.icons8.com/external-jumpicon-glyph-ayub-irawan/25/000000/external-_17-user-interface-jumpicon-(glyph)-jumpicon-glyph-ayub-irawan.png" />
-                </button>
-            </div>
-            <!-- Title imgage -->
-            <div class="titlediv">
-                <a routerLink=''><span class="title"> <img class="titleimg"
-                            src="https://firebasestorage.googleapis.com/v0/b/ram-port.appspot.com/o/name.jpeg?alt=media&token=7a43be4a-f41e-4eb2-8731-f96bb8b4bdfc"
-                            alt="RAMANATHAN"></span></a>
-            </div>
-            <!-- Toolbar Menu -->
-            <div>
-                <ul class="nav-item">
-                    <!-- <li routerLink='Home'>
-                        <a class="fontcl">HOME</a>
-                    </li>
-                    <li routerLink='Gallery'>
-                        <a class="fontcl">GALLERY</a>
-                    </li>
-                    <li class="nftMenu" [matMenuTriggerFor]="menu" [matMenuTriggerFor]="beforeMenu">
-                        <span class="fontcl" (mouseenter)="openNFTmenu()">NFT</span>
-                    </li>
-                    <li routerLink='About'>
-                        <a class="fontcl">ABOUT</a>
-                    </li>
+      <!-- Toolbar -->
+      @if (offsetFlag) {
+        <mat-toolbar class="toolbar mat-elevation-z6">
+          <button mat-icon-button (mouseenter)="sidenav.toggle()">
+            <mat-icon>menu</mat-icon>
+          </button>
 
-                    <li (click)="Connect()">
-                        <a class="fontcl">CONNECT</a>
-                    </li> -->
+          <div class="titlediv">
+            <a routerLink="">
+              <img
+                class="titleimg"
+                src="https://firebasestorage.googleapis.com/v0/b/ram-port.appspot.com/o/name.jpeg?alt=media&token=7a43be4a-f41e-4eb2-8731-f96bb8b4bdfc"
+                alt="RAMANATHAN"
+                draggable="false"
+              />
+            </a>
+          </div>
 
-                    <li class="more" [matMenuTriggerFor]="menu">
-                        <span><mat-icon>more_vert</mat-icon></span>
-                    </li>
-                </ul>
-            </div>
+          <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
         </mat-toolbar>
+      }
 
-        <!-- Git Menu Content -->
-        <mat-menu #menu="matMenu">
-            <a [href]="codeurl" target="_blank" rel="noopener noreferrer">
-                <button mat-menu-item>
-                    <img class="iconimg" src="https://img.icons8.com/material-outlined/28/000000/source-code.png" />
-                    &nbsp;
-                    <span>Code</span>
-                </button>
-            </a>
-            <a [href]="issueurl" target="_blank" rel="noopener noreferrer">
-                <button mat-menu-item>
-                    <img class="iconimg" src="https://img.icons8.com/material-outlined/28/000000/github.png" />
-                    &nbsp;
-                    <span>Issues</span>
-                </button>
-            </a>
-        </mat-menu>
-        <!-- NFT Menu Content -->
-        <mat-menu #beforeMenu="matMenu" xPosition="before">
-            <a [href]="nfturl" target="_blank" rel="noopener noreferrer">
-                <button mat-menu-item (mouseleave)="closeNFTmenu()">
-                    <img src="https://storage.googleapis.com/opensea-static/Logomark/Logomark-Blue.png" height="30px"
-                        width="auto" />
-                    &nbsp;
-                    <span>OpenSea</span>
-                </button>
-            </a>
-        </mat-menu>
+      <mat-menu #menu="matMenu">
+        <a [href]="codeurl" target="_blank">
+          <button mat-menu-item>
+            <mat-icon>code</mat-icon>
+            <span>Source Code</span>
+          </button>
+        </a>
+        <a [href]="issueurl" target="_blank">
+          <button mat-menu-item>
+            <mat-icon>bug_report</mat-icon>
+            <span>Report Issue</span>
+          </button>
+        </a>
+      </mat-menu>
 
-        <!-- Main -->
-        <main>
-            <span><mat-progress-bar *ngIf="!loader" style="height: 7px;" class="example-margin;" [color]="color"
-                    [mode]="mode">
-                </mat-progress-bar></span>
-            <router-outlet *ngIf="loader">
-
-            </router-outlet>
-        </main>
+      <!-- Main Content Area -->
+      <main>
+        @if (!loader()) {
+          <mat-progress-bar mode="indeterminate" color="warn"></mat-progress-bar>
+        }
+        <router-outlet></router-outlet>
 
         <!-- Footer -->
-        <footer matRipple class="footer" id="sm">
-            <div class="footCon">
-                <h2 class="footTxt">CONNECT</h2>
-            </div>
-            <div class="container">
+        <footer class="footer">
+          <div class="footCon">
+            <h2 class="footTxt">Stay Connected</h2>
+          </div>
 
-                <span class="text-muted" matTooltip="github">
-                    <a class="smlnk" target="_blank" [href]="githuburl">
-                        <img src="https://img.icons8.com/fluent/42/000000/github.png" draggable="false" alt="GITHUB"
-                            class="iconimg" />
-                    </a>
-                </span>&nbsp;&nbsp;
-
-                <span class="text-muted" matTooltip="Twitter/X">
-                    <a class="smlnk" target="_blank" [href]="twitterurl">
-                        <img src="https://img.icons8.com/fluent/42/000000/twitterx.png" draggable="false"
-                            alt="Twitter/X" class="iconimg" />
-                    </a>
-                </span>&nbsp;&nbsp;
-
-                <span class="text-muted">
-                    <a class="smlnk">
-                        <img (mouseenter)="openbarcode()"
-                            src="https://img.icons8.com/fluent/42/000000/instagram-new.png" draggable="false"
-                            alt="INSTAGRAM" class="iconimg" />
-                    </a>
-                </span> &nbsp;&nbsp;
-
-                <span class="text-muted" matTooltip="facebook">
-                    <a class="smlnk" target="_blank" [href]="facebookurl">
-                        <img src="https://img.icons8.com/fluent/42/000000/facebook-new.png" draggable="false"
-                            alt="FACEBOOK" class="iconimg" />
-                    </a>
-                </span> &nbsp;&nbsp;
-
-                <span class="text-muted" matTooltip="500px">
-                    <a class="smlnk" target="_blank" [href]="fhpixurl">
-                        <img src="https://img.icons8.com/windows/37/000000/500px-new.png" draggable="false" alt="500PX"
-                            class="iconimg" />
-                    </a>
-                </span>
-            </div>
+          <div class="social-links">
+            <a class="smlnk" [href]="githuburl" target="_blank" matTooltip="GitHub">
+              <img
+                src="https://img.icons8.com/ios-filled/50/ffffff/github.png"
+                alt="GitHub"
+                class="social-icon"
+                draggable="false"
+              />
+            </a>
+            <a class="smlnk" [href]="twitterurl" target="_blank" matTooltip="Twitter / X">
+              <img
+                src="https://img.icons8.com/ios-filled/50/ffffff/twitterx.png"
+                alt="Twitter"
+                class="social-icon"
+                draggable="false"
+              />
+            </a>
+            <a class="smlnk" (click)="openbarcode()" matTooltip="Instagram">
+              <img
+                src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png"
+                alt="Instagram"
+                class="social-icon"
+                draggable="false"
+              />
+            </a>
+            <a class="smlnk" [href]="facebookurl" target="_blank" matTooltip="Facebook">
+              <img
+                src="https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png"
+                alt="Facebook"
+                class="social-icon"
+                draggable="false"
+              />
+            </a>
+            <a class="smlnk" [href]="fhpixurl" target="_blank" matTooltip="500px">
+              <img
+                src="https://img.icons8.com/ios-filled/50/ffffff/500px.png"
+                alt="500px"
+                class="social-icon"
+                draggable="false"
+              />
+            </a>
+          </div>
         </footer>
+      </main>
+
+      <!-- GoTop Button -->
+      @if (!offsetFlag) {
+        <button id="myBtn" (click)="gotop()" matTooltip="Scroll to Top">
+          <mat-icon>arrow_upward</mat-icon>
+        </button>
+      }
     </mat-sidenav-content>
-</mat-sidenav-container>
-
-
-
-<!-- GoTop button -->
-<button *ngIf="!offsetFlag" matRipple id="myBtn" (click)="gotop()"
-    matTooltip="Go Top"><mat-icon>keyboard_arrow_up</mat-icon></button>
-
-</html>
+  </mat-sidenav-container>
+</div>

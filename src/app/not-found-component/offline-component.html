@@ -1,19 +1,19 @@
-<html>
+<div class="offline-container">
+  <div class="content">
+    <div class="icon-wrapper">
+      <mat-icon class="offline-icon pulse">wifi_off</mat-icon>
+    </div>
+    <h1>Ops! You're Offline</h1>
+    <p>It seems you've lost your connection. Please check your internet and try again.</p>
 
-<body>
-    <div id="main">
-        <div class="fof">
-            Offline
-            <br/>
-            <br/>
-            <h1>Connecting...</h1>
-            <br/>
-            <br/>
-            <span (click)="reload()" matTooltip="Reload"><mat-icon>loop</mat-icon></span>
-        </div>
-
+    <div class="status-indicator">
+      <div class="dot"></div>
+      <span>Waiting for connection...</span>
     </div>
 
-</body>
-
-</html>
+    <button (click)="reload()" class="reload-btn" matRipple>
+      <mat-icon>refresh</mat-icon>
+      <span>Try Reconnect</span>
+    </button>
+  </div>
+</div>

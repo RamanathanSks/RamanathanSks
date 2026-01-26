@@ -1,19 +1,45 @@
+<div class="home-container">
+  <div class="hero-card">
+    <!-- Content Section -->
+    <div class="hero-content">
+      <div class="welcome-badge">
+        Hi all, I'm Ram
+        <img
+          src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f44b.png"
+          alt="👋"
+          class="wave-img"
+          draggable="false"
+        />
+      </div>
 
-<body>
-    <div class="container">
-        <div class="content">
-            <h1 class="heading varela-round-regular">Hi all, I'm Ram <span class="wave"><img alt="👋" draggable="false" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f44b.png" style="height: 1em; width: 1em; margin: 0px 0.05em 0px 0.1em; vertical-align: -0.1em;"></span></h1>
-            <p class="description noto-sans-hk-description">A Passionate Software Engineer 🚀, An AWS Certified SDET | Experienced in CI/CD, Jenkins, Angular | Expertise in Java, Javascript, Selenium, Playwright and Cypress | Automation Testing Professional | Published Author | Passionate about Cloud & Problem Solving</p>
-            <div class="buttons">
-                <a (click)="Connect()" mat-fab extended class="button">Contact</a>
-                <a href="https://drive.google.com/file/d/1iX42SeA9e0ggbqg_qAgpHkGKr1cMXxyj/view?usp=sharing" mat-fab extended class="button" target="_blank">Resume</a>
-            </div>
-            
-        </div>
-        <div class="illustration">
-            <img [src]="imgurl" (load)="loadedImg()" alt="">
-        </div>
-       
+      <h1 class="hero-title">Passion for Coding, Precision for Quality.</h1>
+
+      <p class="hero-description">
+        A <span class="highlight-text">Software Engineer</span> &
+        <span class="highlight-text">Photography Enthusiast</span>. I specialize in building robust
+        CI/CD pipelines and high-performance automation testing frameworks using Playwright,
+        Selenium, and Cypress.
+      </p>
+
+      <div class="cta-group">
+        <button (click)="Connect()" class="btn-primary">Get in Touch</button>
+        <a [href]="resumeUrl" target="_blank" class="btn-secondary">Resume</a>
+        <a routerLink="/Gallery" class="btn-secondary">Gallery</a>
+      </div>
     </div>
-    
-</body>
+
+    <!-- Media Section -->
+    <div class="hero-media">
+      <div class="image-wrapper">
+        <img
+          [class.loaded]="isImageLoaded"
+          [src]="imgurl"
+          (load)="loadedImg()"
+          alt="Ramanathan Profile"
+          class="hero-img"
+          draggable="false"
+        />
+      </div>
+    </div>
+  </div>
+</div>

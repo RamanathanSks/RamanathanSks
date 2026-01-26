@@ -1,34 +1,58 @@
-<html>
+<div class="about-page">
+  <!-- Header Section -->
+  <header class="hero-section">
+    <h1 class="main-title">The Story <span class="title-accent">Beyond the lens & code</span></h1>
+  </header>
 
-<body>
-
-    <div class="about">
-        <br>
-        <div></div>
-        <div class="about_me">
-            <div class="imgMine">
-                <img [src]="imgurl" draggable="false" height="360px" width="auto" alt="">
-            </div>
-            <hr>
-            <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <em> Hi folks, </em> welcome to my portfolio! Here, you can find
-                links to my social media and some of my work. :)
-                You might be wondering, 'Why?' or 'For what?' Well, as you've probably guessed, yes, this entire web app
-                was built by me, with the help of Google and various free resources. Primarily, I used Firebase. But
-                enough about that—this is about me, right? So
-                here we go… <em> I’m an Engineer, Who is passionate about Photography and works in IT.</em> Simple
-                right, Well that line cost five years :) My photography journey started one random day when I picked
-                up a DSLR. I had no idea how heavy it was or how to hold it properly. I was trying to capture a bird
-                flying overhead, swinging the camera around and clicking randomly whenever I saw it in the viewfinder.
-                and Just like That I got <a (click)="openbarcode()" style="color: dodgerblue;cursor: pointer;">this</a>.
-                Awesome right..!,Yeah I can't belive it either! Later I got my own camera and chose Engineering,
-                Learned many things except engineering :/
-                then..bla bla covid bla...but the journey continues. I'm still learning. If you want to hear more of my
-                rambling, follow me!
-            </p>
-
+  <!-- Main Content Grid -->
+  <div class="story-grid">
+    <!-- Visual Column -->
+    <div class="visual-column">
+      <div class="image-frame">
+        <img [src]="imgurl" draggable="false" alt="Ramanathan Profile" />
+        <div class="experience-tag">
+          <span class="years">5+</span>
+          <span class="label">Years of Engineering</span>
         </div>
+      </div>
     </div>
-    <br><br><br><br><br><br><br>
-</body>
 
-</html>
+    <!-- Text Column -->
+    <div class="text-column">
+      <div class="biography">
+        <p>
+          Hi, I'm Ramanathan. My journey into technology and art has always been about
+          <span class="highlight">precision meeting creativity</span>. What started as a curiosity
+          for how things work led me into the world of Software Engineering.
+        </p>
+        <p>
+          Along the way, I picked up a DSLR and discovered that the same logical planning used in
+          building robust software could be applied to capturing the perfect frame. Today, I balance
+          the world of <span class="highlight">IT & Automation</span> with a deep passion for
+          <span class="highlight">Photography</span>.
+        </p>
+
+        <div class="quote-box">
+          <p class="quote-text">
+            "Engineering taught me how to build the world; photography taught me how to see it."
+          </p>
+        </div>
+
+        <p>
+          This web application is more than just a portfolio—it's a sandbox where I merge my
+          technical skills with my design aesthetic. Built with Angular and Firebase, it represents
+          my commitment to continuous learning and high-quality craftsmanship.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Area -->
+  <div class="cta-banner">
+    <div class="cta-text">
+      <h3>Let's Create Together</h3>
+      <p>Whether it's a technical project or a creative collaboration.</p>
+    </div>
+    <button (click)="openbarcode()" class="btn-premium">Get in Touch</button>
+  </div>
+</div>

@@ -1,27 +1,29 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { BottomSheet } from '../app.component';
 import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
-  standalone: false
+  standalone: false,
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  constructor(private _bottomSheet: MatBottomSheet) { }
-  imgurl = "https://firebasestorage.googleapis.com/v0/b/ram-port.appspot.com/o/me.bw.jpeg?alt=media&token=82107549-f6a1-4383-8785-ade33a391c16"
+  constructor(private _bottomSheet: MatBottomSheet) {}
+  imgurl = environment.IMAGES.PROFILE;
+  resumeUrl = environment.RESUME_URL;
   ngOnDestroy(): void {
     // console.log("Home Component Destroyed")
   }
   ngOnInit(): void {
     // console.log("Home Component Destroyed")
-
   }
+  isImageLoaded = false;
   loadedImg() {
-    console.log("Image Loaded")
+    console.log('Image Loaded');
+    this.isImageLoaded = true;
   }
   Connect() {
     this._bottomSheet.open(BottomSheet);
   }
-
 }

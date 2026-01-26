@@ -1,19 +1,14 @@
-<html>
-
-<body>
-    <div id="main">
-        <div class="fof">
-            <img src="https://img.icons8.com/fluency/55/000000/error-cloud.png" />
-            <br/>
-            <br/>
-            <h1>Error 404</h1>
-            <br/>
-            <br/>
-            <span routerLink="" matTooltip="Go Back"><img src="https://img.icons8.com/glyph-neue/64/000000/circled-left-2.png"/></span>
-        </div>
-
+<div class="not-found-container">
+  <div class="content">
+    <div class="error-code">404</div>
+    <div class="icon-wrapper">
+      <mat-icon class="error-icon">error_outline</mat-icon>
     </div>
-
-</body>
-
-</html>
+    <h1>Page Not Found</h1>
+    <p>Oops! The page you are looking for doesn't exist or has been moved.</p>
+    <a routerLink="/" class="back-home-btn" matRipple>
+      <mat-icon>home</mat-icon>
+      <span>Back to Safety</span>
+    </a>
+  </div>
+</div>
