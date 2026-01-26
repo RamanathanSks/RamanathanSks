@@ -1,6 +1,6 @@
 {
     "hosting": {
-        "public": "dist",
+        "public": "dist/RamanathanSks-v2/browser",
         "site": "ramanathan-sks",
         "ignore": [
             "firebase.json",
