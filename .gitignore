@@ -45,3 +45,5 @@ __screenshots__/
 # environments
 /src/environments
 
+.firebaserc
+firebase.json

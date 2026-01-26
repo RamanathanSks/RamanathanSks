@@ -75,7 +75,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   Connect() {
-    this._bottomSheet.open(BottomSheet);
+    this._bottomSheet.open(BottomSheet, {
+      panelClass: 'custom-bottom-sheet',
+    });
   }
   @ViewChild(MatMenuTrigger) trigger!: MatMenuTrigger;
 
@@ -86,7 +88,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.trigger.closeMenu();
   }
   OpenNFTSheet() {
-    this._bottomSheet.open(BottomSheetNFT);
+    this._bottomSheet.open(BottomSheetNFT, {
+      panelClass: 'custom-bottom-sheet',
+    });
   }
 
   ngOnInit(): void {
@@ -196,7 +200,6 @@ export class BottomSheet {
   }
   openLink(event: MouseEvent): void {
     this._bottomSheetRef.dismiss();
-    event.preventDefault();
   }
 }
 

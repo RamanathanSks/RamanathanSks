@@ -47,7 +47,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
     private title: Title,
     private dialog: MatDialog,
   ) {
-    this.title.setTitle('Ramanathan Sks');
+    this.title.setTitle('Gallery | Ramanathan');
     var device = this.imgser.getMobileOperatingSystem();
 
     if (device == 'WIN') this.isiosdev = false;

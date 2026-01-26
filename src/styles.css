@@ -19,7 +19,6 @@ body {
   user-select: none;
   -webkit-touch-callout: none;
   -webkit-user-drag: none;
-  user-drag: none;
 }
 
 @keyframes gradient {
@@ -34,4 +33,19 @@ body {
     100% {
         background-position: 0% 50%;
     }
+}
+
+.custom-bottom-sheet {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border-top-left-radius: 40px !important;
+    border-top-right-radius: 40px !important;
+    overflow: hidden !important;
+}
+
+.mat-bottom-sheet-container {
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
 }
