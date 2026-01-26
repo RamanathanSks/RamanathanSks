@@ -7,8 +7,7 @@ import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 
-import { MaterialModule } from './material/material.module'
-
+import { MaterialModule } from './material/material.module';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -20,7 +19,7 @@ import { barcodeDialog } from './app.component';
 import { NotFoundComponentComponent } from './not-found-component/not-found-component.component';
 import { OfflineComponent } from './not-found-component/not-found-component.component';
 import { BottomSheet } from './app.component';
-import { BottomSheetNFT } from './app.component';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,24 +29,21 @@ import { BottomSheetNFT } from './app.component';
     AboutComponent,
     NotFoundComponentComponent,
     OfflineComponent,
-    BottomSheet, BottomSheetNFT
+    BottomSheet,
   ],
   imports: [
     BrowserModule,
     MaterialModule,
     AppRoutingModule,
-    AngularFireModule.initializeApp(
-      environment.firebase
-    ),
+    AngularFireModule.initializeApp(environment.firebase),
     AngularFireStorageModule,
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    MatBottomSheetModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
   schemas: [],
 })
 export class AppModule {
-
-  constructor() {
-  }
+  constructor() {}
 }

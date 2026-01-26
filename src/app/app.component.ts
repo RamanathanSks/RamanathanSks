@@ -87,11 +87,6 @@ export class AppComponent implements OnInit, OnDestroy {
   closeNFTmenu() {
     this.trigger.closeMenu();
   }
-  OpenNFTSheet() {
-    this._bottomSheet.open(BottomSheetNFT, {
-      panelClass: 'custom-bottom-sheet',
-    });
-  }
 
   ngOnInit(): void {
     this.getAllData();
@@ -185,7 +180,7 @@ export class barcodeDialog {
 //bottom sheet
 @Component({
   selector: 'bottom-sheet',
-  templateUrl: 'bottom-sheet.html',
+  templateUrl: './bottom-sheet.html',
   standalone: false,
 })
 export class BottomSheet {
@@ -200,22 +195,5 @@ export class BottomSheet {
   }
   openLink(event: MouseEvent): void {
     this._bottomSheetRef.dismiss();
-  }
-}
-
-@Component({
-  selector: 'bottom-sheet2',
-  templateUrl: 'bottom-sheet2.html',
-  standalone: false,
-})
-export class BottomSheetNFT {
-  nfturl: string;
-  constructor(private _bottomSheetRef2: MatBottomSheetRef<BottomSheet>) {
-    this.nfturl = environment.NFT_URL;
-  }
-
-  openLink(event: MouseEvent): void {
-    this._bottomSheetRef2.dismiss();
-    event.preventDefault();
   }
 }
