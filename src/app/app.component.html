@@ -3,7 +3,7 @@
   <mat-sidenav-container>
     <mat-sidenav
       #sidenav
-      (mouseleave)="sidenav.toggle()"
+      (mouseleave)="sidenav.close()"
       class="sidenavList"
       role="navigation"
       mode="over"
@@ -46,7 +46,7 @@
       <!-- Toolbar -->
       @if (offsetFlag) {
         <mat-toolbar class="toolbar mat-elevation-z6">
-          <button mat-icon-button (mouseenter)="sidenav.toggle()">
+          <button mat-icon-button (mouseenter)="sidenav.open()">
             <mat-icon>menu</mat-icon>
           </button>
 

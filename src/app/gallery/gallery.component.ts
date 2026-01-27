@@ -108,10 +108,10 @@ export class GalleryComponent implements OnInit, OnDestroy {
     this.imgser.updateCardImgObs(this.cardsimgList).subscribe();
   }
 
-  viewPhoto(index: number = 0) {
+  viewPhoto(index: number = 0, images: any[] = this.cardsimgList) {
     this.dialog.open(PhotoDialog, {
       data: {
-        images: this.cardsimgList,
+        images: images,
         index: index,
       },
       panelClass: 'full-screen-dialog',

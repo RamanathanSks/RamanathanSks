@@ -22,7 +22,7 @@
 
     <div class="featured-carousel">
       @for (item of carouselImgList; track $index) {
-        <div class="featured-item" (click)="viewPhoto($index)">
+        <div class="featured-item" (click)="viewPhoto($index, carouselImgList)">
           <img
             [src]="item.url"
             [alt]="'Featured ' + $index"
