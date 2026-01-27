@@ -1,0 +1,48 @@
+name: Angular CI
+
+on:
+  push:
+    branches: ['main', 'develop']
+  pull_request:
+    branches: ['main', 'develop']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: PROD
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Inject Firebase config
+        run: |
+          sed -i "s|__FIREBASE_API_KEY__|${{ secrets.APIKEY }}|g" src/environments/environment.prod.ts
+          sed -i "s|__FIREBASE_AUTH_DOMAIN__|${{ secrets.AUTHDOMAIN }}|g" src/environments/environment.prod.ts
+          sed -i "s|__FIREBASE_DATABASE_URL__|${{ secrets.DATABASEURL }}|g" src/environments/environment.prod.ts
+          sed -i "s|__FIREBASE_PROJECT_ID__|${{ secrets.PROJECTID }}|g" src/environments/environment.prod.ts
+          sed -i "s|__FIREBASE_STORAGE_BUCKET__|${{ secrets.STORAGEBUCKET }}|g" src/environments/environment.prod.ts
+          sed -i "s|__FIREBASE_MESSAGING_SENDER_ID__|${{ secrets.MESSAGINGSENDERID }}|g" src/environments/environment.prod.ts
+          sed -i "s|__FIREBASE_APP_ID__|${{ secrets.APPID }}|g" src/environments/environment.prod.ts
+          sed -i "s|__FIREBASE_MEASUREMENT_ID__|${{ secrets.MEASUREMENTID }}|g" src/environments/environment.prod.ts
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint --if-present
+
+      - name: Run tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnss3 libatk-bridge2.0-0 libgtk-3-0
+          npm test -- --watch=false --browsers=ChromeHeadless
+
+      - name: Build project
+        run: npm run build -- --configuration production
