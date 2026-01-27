@@ -22,7 +22,7 @@ import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-shee
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ThemePalette } from '@angular/material/core';
 import { ProgressBarMode } from '@angular/material/progress-bar';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
