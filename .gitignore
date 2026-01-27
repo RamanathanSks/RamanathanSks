@@ -43,5 +43,4 @@ __screenshots__/
 .DS_Store
 
 # environments
-/src/environments
-firebase.json
+/src/environments/environment.ts
