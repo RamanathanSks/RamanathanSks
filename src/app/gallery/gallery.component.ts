@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
 import { ImageserviceService } from '../imageservice.service';
 import { CARDS } from '../Model/interface';
 
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-gallery',
