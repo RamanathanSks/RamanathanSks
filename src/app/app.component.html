@@ -34,7 +34,7 @@
         </mat-list-item>
 
         <mat-list-item matRipple>
-          <a class="sidelink" (click)="Connect(); sidenav.close()">
+          <a class="sidelink" role="button" tabindex="0" (click)="Connect(); sidenav.close()">
             <mat-icon class="sidenavIcon">alternate_email</mat-icon>
             <span class="full-width">CONTACT</span>
           </a>
@@ -84,9 +84,6 @@
 
       <!-- Main Content Area -->
       <main>
-        @if (!loader()) {
-          <mat-progress-bar mode="indeterminate" color="warn"></mat-progress-bar>
-        }
         <router-outlet></router-outlet>
 
         <!-- Footer -->
@@ -112,7 +109,13 @@
                 draggable="false"
               />
             </a>
-            <a class="smlnk" (click)="openbarcode()" matTooltip="Instagram">
+            <a
+              class="smlnk"
+              role="button"
+              tabindex="0"
+              (click)="openbarcode()"
+              matTooltip="Instagram"
+            >
               <img
                 src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png"
                 alt="Instagram"

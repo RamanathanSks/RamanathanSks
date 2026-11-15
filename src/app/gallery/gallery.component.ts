@@ -1,19 +1,9 @@
-import {
-  Component,
-  ElementRef,
-  OnInit,
-  OnDestroy,
-  AfterViewInit,
-  ViewChild,
-  HostListener,
-  Inject,
-} from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy, Inject, signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
-import { Subscription } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { ImageserviceService } from '../imageservice.service';
-import { CARDS } from '../Model/interface';
-
+import { CARDS, GALLERY, IMAGELST, TILES } from '../Model/interface';
 import { environment } from 'src/environments/environment.prod';
 
 @Component({
@@ -23,24 +13,18 @@ import { environment } from 'src/environments/environment.prod';
   standalone: false,
 })
 export class GalleryComponent implements OnInit, OnDestroy {
-  @ViewChild('homebg') HomeBg: ElementRef | undefined;
-  @HostListener('window:resize', ['$event'])
-  onResize(event: Event) {
-    this.innerWidth = window.innerWidth;
-    this.screenwidth = this.innerWidth > 1300 ? true : false;
-  }
   cardsimgList: CARDS[] = [];
-  innerWidth: any = window.innerWidth;
-  color = 'none';
-  isiosdev: boolean = false;
-  screenwidth: boolean = false;
-  carouselImgList: any[] = [];
-  tilesImgList: any[] = [];
-  imageList: any[] = [];
-  onload: boolean = false;
+  carouselImgList: GALLERY[] = [];
+  imageList: IMAGELST[] = [];
+  tilesImgList: TILES[] = [];
+  isLoading = signal(true);
 
-  topBackgroundImages = environment.IMAGES.CAROUSEL;
+  topBackgroundImages: string[] = environment.IMAGES.CAROUSEL;
   instagramUrl = environment.INSTAGRAM_URL;
+  imgurl = environment.IMAGES.GALLERY_ME;
+
+  loadedImages: Set<string> = new Set();
+  private dataSub?: Subscription;
 
   constructor(
     private imgser: ImageserviceService,
@@ -48,71 +32,76 @@ export class GalleryComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
   ) {
     this.title.setTitle('Gallery | Ramanathan');
-    var device = this.imgser.getMobileOperatingSystem();
-
-    if (device == 'WIN') this.isiosdev = false;
-    else this.isiosdev = true;
   }
-  changeColor(url: string) {
-    // this.color = this.color=="none"?"warn":"none";
-    this.cardsimgList.map((i) => {
-      if (i.url === url) {
-        if (i.color === 'none') {
-          i.likeCnt = i.likeCnt + 1;
-          i.color = 'warn';
+
+  ngOnInit(): void {
+    this.dataSub = forkJoin([
+      this.imgser.getCarouselObs$(),
+      this.imgser.getCardImgObs$(),
+      this.imgser.getHomeObs$(),
+      this.imgser.getImageObs$(),
+      this.imgser.getTilesObs$(),
+    ]).subscribe({
+      next: ([carousel, cards, home, images, tiles]) => {
+        const favorites = this.imgser.getFavorites();
+        this.carouselImgList = carousel;
+        this.cardsimgList = cards.map((card) => {
+          const isFav = favorites.has(card.url);
+          return {
+            ...card,
+            color: isFav ? 'warn' : 'none',
+            likeCnt: isFav ? (card.likeCnt || 0) + 1 : card.likeCnt || 0,
+          };
+        });
+        if (home.length > 0) {
+          this.topBackgroundImages = home.map((item) => item.url);
+        }
+        this.imageList = images;
+        this.tilesImgList = tiles;
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+  changeColor(url: string): void {
+    const isNowFavorited = this.imgser.toggleFavorite(url);
+    for (const item of this.cardsimgList) {
+      if (item.url === url) {
+        if (isNowFavorited) {
+          item.likeCnt = (item.likeCnt || 0) + 1;
+          item.color = 'warn';
           if (this.imgser.feedbackNotify) {
             this.imgser.openSnackBar('Thank you for valuable feedback...❤️');
             this.imgser.feedbackNotify = false;
           }
         } else {
-          i.likeCnt = i.likeCnt > 0 ? i.likeCnt - 1 : 0;
-          i.color = 'none';
+          item.likeCnt = item.likeCnt > 0 ? item.likeCnt - 1 : 0;
+          item.color = 'none';
         }
       }
-    });
+    }
   }
 
-  imgurl = environment.IMAGES.GALLERY_ME;
-
-  ngOnInit(): void {
-    this.cardsimgList = this.imgser.getCardImg();
-    this.onload = true;
-    this.onResize(new Event('resize'));
-    this.carouselImgList = this.imgser.getCarousel();
-    this.tilesImgList = this.imgser.getTitles();
-    this.imageList = this.imgser.getimgageLst();
-  }
-
-  getColor(url: string, likeCnt: number) {
-    var color: string = '';
-    this.cardsimgList.map((i) => {
-      if (i.url === url) {
-        color = i.color;
-      }
-    });
-    return color;
-  }
-
-  loadedImages: Set<string> = new Set();
-
-  onImageLoad(key: string) {
+  onImageLoad(key: string): void {
     this.loadedImages.add(key);
   }
 
   isImageLoaded(key: string): boolean {
     return this.loadedImages.has(key);
   }
-  ngOnDestroy(): void {
-    // console.log("Home Destoryed");
 
-    this.imgser.updateCardImgObs(this.cardsimgList).subscribe();
+  ngOnDestroy(): void {
+    this.dataSub?.unsubscribe();
   }
 
-  viewPhoto(index: number = 0, images: any[] = this.cardsimgList) {
+  viewPhoto(index = 0, images: { url: string }[] = this.cardsimgList): void {
     this.dialog.open(PhotoDialog, {
       data: {
-        images: images,
-        index: index,
+        images,
+        index,
       },
       panelClass: 'full-screen-dialog',
       maxWidth: '100vw',
@@ -281,25 +270,25 @@ export class PhotoDialog {
 
   constructor(
     public dialogRef: MatDialogRef<PhotoDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: { images: any[]; index: number },
+    @Inject(MAT_DIALOG_DATA) public data: { images: { url: string }[]; index: number },
   ) {
     this.currentIndex = data.index;
   }
 
-  close() {
+  close(): void {
     this.dialogRef.close();
   }
 
-  next() {
+  next(): void {
     this.currentIndex = (this.currentIndex + 1) % this.data.images.length;
   }
 
-  prev() {
+  prev(): void {
     this.currentIndex = (this.currentIndex - 1 + this.data.images.length) % this.data.images.length;
   }
 
   @HostListener('window:keydown', ['$event'])
-  handleKeyDown(event: KeyboardEvent) {
+  handleKeyDown(event: KeyboardEvent): void {
     if (event.key === 'ArrowRight') this.next();
     if (event.key === 'ArrowLeft') this.prev();
     if (event.key === 'Escape') this.close();

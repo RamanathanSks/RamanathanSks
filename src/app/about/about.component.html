@@ -8,8 +8,16 @@
   <div class="story-grid">
     <!-- Visual Column -->
     <div class="visual-column">
-      <div class="image-frame">
-        <img [src]="imgurl" draggable="false" alt="Ramanathan Profile" />
+      <div class="image-frame" [class.show-color]="showColor" (click)="toggleColor()">
+        <img [src]="imgurl" draggable="false" alt="Ramanathan Profile" class="bw-img" />
+        <img
+          [src]="colorImgUrl"
+          draggable="false"
+          loading="lazy"
+          decoding="async"
+          alt="Ramanathan Color Profile"
+          class="color-img"
+        />
         <div class="experience-tag">
           <span class="years">5+</span>
           <span class="label">Years of Engineering</span>

@@ -1,19 +1,17 @@
-export interface GALLERY {
-    url: string
+export interface ImageItem {
+  url: string;
 }
 
-export interface TILES {
-    ur: string
-}
-
-export interface IMAGELST {
-    url: string
-}
+export type GALLERY = ImageItem;
+export type HOME = ImageItem;
+export type IMAGELST = ImageItem;
+export type TILES = ImageItem;
 
 export interface CARDS {
-    url: string,
-    likeCnt: number
-    des: string,
-    tooltip: string
-    color: string
+  id?: string;
+  url: string;
+  likeCnt: number;
+  des: string;
+  tooltip?: string;
+  color: string;
 }

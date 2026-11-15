@@ -21,25 +21,24 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
-      - name: Inject Firebase config
-        run: |
-          sed -i "s|__FIREBASE_API_KEY__|${{ secrets.APIKEY }}|g" src/environments/environment.prod.ts
-          sed -i "s|__FIREBASE_AUTH_DOMAIN__|${{ secrets.AUTHDOMAIN }}|g" src/environments/environment.prod.ts
-          sed -i "s|__FIREBASE_DATABASE_URL__|${{ secrets.DATABASEURL }}|g" src/environments/environment.prod.ts
-          sed -i "s|__FIREBASE_PROJECT_ID__|${{ secrets.PROJECTID }}|g" src/environments/environment.prod.ts
-          sed -i "s|__FIREBASE_STORAGE_BUCKET__|${{ secrets.STORAGEBUCKET }}|g" src/environments/environment.prod.ts
-          sed -i "s|__FIREBASE_MESSAGING_SENDER_ID__|${{ secrets.MESSAGINGSENDERID }}|g" src/environments/environment.prod.ts
-          sed -i "s|__FIREBASE_APP_ID__|${{ secrets.APPID }}|g" src/environments/environment.prod.ts
-          sed -i "s|__FIREBASE_MEASUREMENT_ID__|${{ secrets.MEASUREMENTID }}|g" src/environments/environment.prod.ts
-
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm ci
 
       - name: Build project
+        env:
+          FIREBASE_API_KEY: ${{ secrets.APIKEY }}
+          FIREBASE_AUTH_DOMAIN: ${{ secrets.AUTHDOMAIN }}
+          FIREBASE_DATABASE_URL: ${{ secrets.DATABASEURL }}
+          FIREBASE_PROJECT_ID: ${{ secrets.PROJECTID }}
+          FIREBASE_STORAGE_BUCKET: ${{ secrets.STORAGEBUCKET }}
+          FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.MESSAGINGSENDERID }}
+          FIREBASE_APP_ID: ${{ secrets.APPID }}
+          FIREBASE_MEASUREMENT_ID: ${{ secrets.MEASUREMENTID }}
         run: npm run build -- --configuration production --base-href "/${{ github.event.repository.name }}/"
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BottomSheet } from '../app.component';
 import { Title } from '@angular/platform-browser';
-import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { environment } from 'src/environments/environment.prod';
+
 @Component({
   selector: 'app-about',
   templateUrl: './about.component.html',
@@ -10,8 +12,9 @@ import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-shee
   standalone: false,
 })
 export class AboutComponent implements OnInit {
-  imgurl =
-    'https://firebasestorage.googleapis.com/v0/b/ram-port.appspot.com/o/me.bw.jpeg?alt=media&token=82107549-f6a1-4383-8785-ade33a391c16';
+  imgurl = environment.IMAGES.GALLERY_ME;
+  colorImgUrl = environment.IMAGES.GALLERY_ME_COLOR;
+  showColor = false;
 
   constructor(
     private title: Title,
@@ -20,8 +23,14 @@ export class AboutComponent implements OnInit {
   ) {
     this.title.setTitle('About | Ramanathan');
   }
+
   ngOnInit(): void {}
-  Connect() {
+
+  toggleColor(): void {
+    this.showColor = !this.showColor;
+  }
+
+  Connect(): void {
     this._bottomSheet.open(BottomSheet);
   }
 }

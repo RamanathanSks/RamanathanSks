@@ -1,37 +1,12 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-      a {
-        outline: none;
-      }
-      img {
-        vertical-align: super;
-        cursor: pointer;
-      }
-      p {
-        text-align: center;
-      }
-    </style>
-  </head>
-
-  <body>
-    <p>Click (or) Scan</p>
-    <a [href]="instagramurl" target="_blank">
-      <span>
-        <img
-          matTooltip="Instagram"
-          matTooltipPosition="below"
-          height="200px"
-          width="200px"
-          [src]="barcodeImgUrl"
-          alt="barcode"
-          draggable="false"
-        />
-      </span>
-    </a>
-  </body>
-</html>
+<p class="barcode-hint">Click (or) Scan</p>
+<a class="barcode-link" [href]="instagramurl" target="_blank" rel="noopener noreferrer">
+  <img
+    matTooltip="Instagram"
+    matTooltipPosition="below"
+    height="200"
+    width="200"
+    [src]="barcodeImgUrl"
+    alt="Instagram QR code"
+    draggable="false"
+  />
+</a>

@@ -92,6 +92,14 @@
     margin: 0 auto;
 }
 
+.section-header {
+    margin-bottom: 2.5rem;
+}
+
+.clickable-item {
+    cursor: pointer;
+}
+
 .masonry-grid {
     column-count: 4;
     column-gap: 1.5rem;
@@ -117,6 +125,9 @@
 }
 
 .photo-item {
+    display: inline-block;
+    width: 100%;
+    -webkit-column-break-inside: avoid;
     break-inside: avoid;
     margin-bottom: 1.5rem;
     position: relative;

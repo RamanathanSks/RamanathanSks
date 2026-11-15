@@ -1,15 +1,8 @@
+import { firebaseConfig } from './firebase-config';
+
 export const environment = {
   production: true,
-  firebase: {
-    apiKey: 'apiKey',
-    authDomain: 'authDomain',
-    databaseURL: 'databaseURL',
-    projectId: 'projectId',
-    storageBucket: 'storageBucket',
-    messagingSenderId: 'messagingSenderId',
-    appId: 'appId',
-    measurementId: 'measurementId',
-  },
+  firebase: firebaseConfig,
   GITHUB_URL: 'https://github.com/RamanathanSks',
   CODE_URL: 'https://github.com/RamanathanSks/RamanathanSks',
   ISSUE_URL: 'https://github.com/RamanathanSks/RamanathanSks/issues',
@@ -26,6 +19,8 @@ export const environment = {
       'https://firebasestorage.googleapis.com/v0/b/ram-port.appspot.com/o/foto.png?alt=media&token=2a74d774-6e5e-4023-a9d3-33f37d8acdf2',
     GALLERY_ME:
       'https://firebasestorage.googleapis.com/v0/b/ram-port.appspot.com/o/me.bw.jpeg?alt=media&token=82107549-f6a1-4383-8785-ade33a391c16',
+    GALLERY_ME_COLOR:
+      'https://firebasestorage.googleapis.com/v0/b/ram-port.appspot.com/o/me.color.jpeg?alt=media&token=6e2ee5c7-f7f5-41ca-afe6-caf47193ce0e',
     CAROUSEL: [
       'https://firebasestorage.googleapis.com/v0/b/ram-port.appspot.com/o/home%2F1.jpeg?alt=media&token=144d6157-4157-48e8-83ac-9c6567384c43',
       'https://firebasestorage.googleapis.com/v0/b/ram-port.appspot.com/o/home%2F3.JPG?alt=media&token=294c79b3-4245-48ec-a8a0-4083a6165005',

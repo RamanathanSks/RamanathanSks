@@ -1,11 +1,36 @@
 <div class="gallery-page">
-  <!-- Gallery Hero Header -->
+  @if (isLoading()) {
+    <mat-progress-bar mode="indeterminate" color="warn"></mat-progress-bar>
+  }
+
+  <!-- Gallery Hero Header (uses Firestore `home` collection) -->
   <header class="gallery-hero">
     <div class="hero-bg-overlay"></div>
     <div class="hero-bg-images">
-      <img [src]="topBackgroundImages[0]" class="hero-img-bg bg-1" alt="" draggable="false" />
-      <img [src]="topBackgroundImages[1]" class="hero-img-bg bg-2" alt="" draggable="false" />
-      <img [src]="topBackgroundImages[2]" class="hero-img-bg bg-3" alt="" draggable="false" />
+      <img
+        [src]="topBackgroundImages[0]"
+        class="hero-img-bg bg-1"
+        alt=""
+        loading="lazy"
+        decoding="async"
+        draggable="false"
+      />
+      <img
+        [src]="topBackgroundImages[1]"
+        class="hero-img-bg bg-2"
+        alt=""
+        loading="lazy"
+        decoding="async"
+        draggable="false"
+      />
+      <img
+        [src]="topBackgroundImages[2]"
+        class="hero-img-bg bg-3"
+        alt=""
+        loading="lazy"
+        decoding="async"
+        draggable="false"
+      />
     </div>
     <div class="hero-content">
       <h1 class="hero-title">Visual Stories</h1>
@@ -13,7 +38,7 @@
     </div>
   </header>
 
-  <!-- Featured Section (Horizontal Scroll) -->
+  <!-- Featured Section (Horizontal Scroll — Firestore `gallery` collection) -->
   <section class="featured-section">
     <div class="featured-header">
       <h2 class="featured-title">Highlights</h2>
@@ -27,6 +52,7 @@
             [src]="item.url"
             [alt]="'Featured ' + $index"
             loading="lazy"
+            decoding="async"
             draggable="false"
             (load)="onImageLoad('featured-' + $index)"
             [class.loaded]="isImageLoaded('featured-' + $index)"
@@ -36,8 +62,12 @@
     </div>
   </section>
 
-  <!-- Main Masonry Grid -->
+  <!-- Main Masonry Grid (Firestore `cards` collection) -->
   <div class="gallery-wrapper">
+    <div class="section-header">
+      <h2 class="featured-title">Visual Stories</h2>
+      <div class="line-accent"></div>
+    </div>
     <div class="masonry-grid">
       @for (item of cardsimgList; track $index) {
         <div class="photo-item">
@@ -45,7 +75,8 @@
             [src]="item.url"
             draggable="false"
             loading="lazy"
-            alt="Photography Piece"
+            decoding="async"
+            [alt]="item.des || 'Photography Piece'"
             (load)="onImageLoad('masonry-' + $index)"
             [class.loaded]="isImageLoaded('masonry-' + $index)"
           />
@@ -70,7 +101,79 @@
     </div>
   </div>
 
-  <!-- Dynamic Smooth Carousel Section -->
+  <!-- Frames Section (Firestore `image` collection) -->
+  @if (imageList.length > 0) {
+    <section class="gallery-wrapper">
+      <div class="section-header">
+        <h2 class="featured-title">Frames</h2>
+        <div class="line-accent"></div>
+      </div>
+      <div class="masonry-grid">
+        @for (item of imageList; track $index) {
+          <div class="photo-item clickable-item" (click)="viewPhoto($index, imageList)">
+            <img
+              [src]="item.url"
+              draggable="false"
+              loading="lazy"
+              decoding="async"
+              [alt]="'Frame ' + ($index + 1)"
+              (load)="onImageLoad('frame-' + $index)"
+              [class.loaded]="isImageLoaded('frame-' + $index)"
+            />
+            <div class="photo-overlay">
+              <div class="action-buttons">
+                <button
+                  class="btn-icon"
+                  matTooltip="View Fullscreen"
+                  (click)="$event.stopPropagation(); viewPhoto($index, imageList)"
+                >
+                  <mat-icon>fullscreen</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- Tiles Grid Section (Firestore `tiles` collection) -->
+  @if (tilesImgList.length > 0) {
+    <section class="gallery-wrapper">
+      <div class="section-header">
+        <h2 class="featured-title">Moments</h2>
+        <div class="line-accent"></div>
+      </div>
+      <div class="masonry-grid">
+        @for (item of tilesImgList; track $index) {
+          <div class="photo-item clickable-item" (click)="viewPhoto($index, tilesImgList)">
+            <img
+              [src]="item.url"
+              draggable="false"
+              loading="lazy"
+              decoding="async"
+              [alt]="'Moment ' + ($index + 1)"
+              (load)="onImageLoad('tile-' + $index)"
+              [class.loaded]="isImageLoaded('tile-' + $index)"
+            />
+            <div class="photo-overlay">
+              <div class="action-buttons">
+                <button
+                  class="btn-icon"
+                  matTooltip="View Fullscreen"
+                  (click)="$event.stopPropagation(); viewPhoto($index, tilesImgList)"
+                >
+                  <mat-icon>fullscreen</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- Dynamic Smooth Carousel Section (Firestore `home` collection) -->
   <section class="bottom-carousel-section">
     <div
       id="galleryCarousel"
@@ -91,7 +194,14 @@
       <div class="carousel-inner">
         @for (img of topBackgroundImages; track $index) {
           <div class="carousel-item" [class.active]="$index === 0">
-            <img [src]="img" class="d-block w-100" alt="Carousel Image" draggable="false" />
+            <img
+              [src]="img"
+              class="d-block w-100"
+              alt="Carousel Image"
+              loading="lazy"
+              decoding="async"
+              draggable="false"
+            />
           </div>
         }
       </div>

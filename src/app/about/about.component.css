@@ -75,6 +75,7 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     background: rgba(255, 255, 255, 0.02);
+    cursor: pointer;
 }
 
 .image-frame img {
@@ -82,8 +83,23 @@
     height: auto;
     border-radius: 10px;
     filter: saturate(0.8);
-    transition: filter 0.5s ease;
+    transition: filter 0.5s ease, opacity 0.5s ease;
     display: block;
+}
+
+.image-frame .color-img {
+    position: absolute;
+    inset: 20px;
+    width: calc(100% - 40px);
+    height: calc(100% - 40px);
+    object-fit: cover;
+    opacity: 0;
+}
+
+.image-frame:hover .color-img,
+.image-frame.show-color .color-img {
+    opacity: 1;
+    filter: saturate(1.1);
 }
 
 .image-frame:hover img {

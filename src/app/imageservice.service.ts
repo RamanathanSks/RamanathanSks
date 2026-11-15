@@ -1,173 +1,213 @@
-import { Injectable } from '@angular/core';
-import { AngularFireStorage } from "@angular/fire/compat/storage";
-import { AngularFirestore, AngularFirestoreCollection } from "@angular/fire/compat/firestore";
-import { Observable, of, from } from 'rxjs';
-import { map, shareReplay, tap, catchError } from 'rxjs/operators';
-import { CARDS, GALLERY } from './Model/interface';
-import { TILES } from './Model/interface';
-import { IMAGELST } from './Model/interface';
+import { Inject, Injectable, InjectionToken, Optional } from '@angular/core';
+import { getApp, getApps, initializeApp } from 'firebase/app';
+import { collection, getDocs, getFirestore } from 'firebase/firestore/lite';
+import { from, Observable, of } from 'rxjs';
+import { catchError, shareReplay, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from 'src/environments/environment.prod';
+import { CARDS, GALLERY, HOME, IMAGELST, TILES } from './Model/interface';
+
+const SESSION_CACHE_PREFIX = 'ram_port_cache_v1_';
+const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes
+const FAVORITES_STORAGE_KEY = 'ram_port_favorites_v1';
+
+interface CachedPayload<T> {
+  timestamp: number;
+  data: T[];
+}
+
+export type FirestoreCollectionFetcher = <T>(
+  collectionName: string,
+  includeId: boolean,
+) => Promise<T[]>;
+
+export const FIRESTORE_FETCHER = new InjectionToken<FirestoreCollectionFetcher>(
+  'FIRESTORE_FETCHER',
+);
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ImageserviceService {
-  onFirstLoad: boolean = true;
-  feedbackNotify: boolean = true;
+  feedbackNotify = true;
 
-  // Local data stores (kept for synchronous access compatibility)
   carouselImgList: GALLERY[] = [];
-  tilesImgList: TILES[] = [];
+  cardsimgList: CARDS[] = [];
+  homeImgList: HOME[] = [];
   imageList: IMAGELST[] = [];
-  cardsimgList: any[] = []; // Typed as any to include 'id' field
+  tilesImgList: TILES[] = [];
 
-  // Observables
-  private carousel$: Observable<boolean>;
-  private tiles$: Observable<boolean>;
-  private image$: Observable<boolean>;
-  private cards$: Observable<boolean>;
+  private carousel$?: Observable<GALLERY[]>;
+  private cards$?: Observable<CARDS[]>;
+  private home$?: Observable<HOME[]>;
+  private image$?: Observable<IMAGELST[]>;
+  private tiles$?: Observable<TILES[]>;
+  private bypassCacheOnReload = this.isPageReload();
 
-  // Collections
-  GalleryCol: AngularFirestoreCollection<GALLERY>;
-  TilesCol: AngularFirestoreCollection<TILES>;
-  ImageCol: AngularFirestoreCollection<IMAGELST>;
-  CardsCol: AngularFirestoreCollection<CARDS>;
+  constructor(
+    private _snackBar: MatSnackBar,
+    @Optional() @Inject(FIRESTORE_FETCHER) private customFetcher?: FirestoreCollectionFetcher | null,
+  ) {}
 
-  constructor(private firedb: AngularFirestore, private _snackBar: MatSnackBar) {
-    this.GalleryCol = this.firedb.collection<GALLERY>('gallery');
-    this.TilesCol = this.firedb.collection<TILES>('tiles');
-    this.ImageCol = this.firedb.collection<IMAGELST>('image');
-    this.CardsCol = this.firedb.collection<CARDS>('cards');
-
-    // Initialize cached streams
-    this.carousel$ = this.initCollection(this.GalleryCol, this.carouselImgList);
-    this.tiles$ = this.initCollection(this.TilesCol, this.tilesImgList);
-    this.image$ = this.initCollection(this.ImageCol, this.imageList);
-    
-    // Cards collection with ID field for robust updates
-    this.cards$ = this.CardsCol.valueChanges({ idField: 'id' }).pipe(
-      tap((data: any[]) => {
-        this.cardsimgList.length = 0;
-        this.cardsimgList.push(...data);
-      }),
-      map(() => true),
-      shareReplay(1),
-      catchError(error => {
-        console.error('Error fetching cards:', error);
-        return of(false);
-      })
-    );
-  }
-
-  // Helper to create a cached observable that updates a local array
-  private initCollection<T>(collection: AngularFirestoreCollection<T>, targetList: T[]): Observable<boolean> {
-    return collection.valueChanges().pipe(
-      tap((data: T[]) => {
-        targetList.length = 0;
-        targetList.push(...data);
-      }),
-      map(() => true),
-      shareReplay(1),
-      catchError(error => {
-        console.error('Error fetching collection:', error);
-        return of(false);
-      })
-    );
-  }
-
-  // --- Carousel Methods ---
-  getCarouselObs$(): Observable<any> {
+  /** Fetch gallery carousel items once per session (cached in memory + sessionStorage). */
+  getCarouselObs$(): Observable<GALLERY[]> {
+    if (!this.carousel$) {
+      this.carousel$ = this.fetchOnceWithCache<GALLERY>('gallery', this.carouselImgList);
+    }
     return this.carousel$;
   }
 
-  getCarousel(): GALLERY[] {
-    return this.carouselImgList;
-  }
-
-  // --- Titles Methods ---
-  getTitlesObs$(): Observable<any> {
-    return this.tiles$;
-  }
-
-  getTitles(): TILES[] {
-    return this.tilesImgList;
-  }
-
-  // --- Image Methods ---
-  getImgageObs$(): Observable<any> {
-    return this.image$;
-  }
-
-  getimgageLst(): IMAGELST[] {
-    return this.imageList;
-  }
-
-  // --- Card Methods ---
-  getCardImgObs$(): Observable<any> {
+  /** Fetch gallery card items once per session (cached in memory + sessionStorage). */
+  getCardImgObs$(): Observable<CARDS[]> {
+    if (!this.cards$) {
+      this.cards$ = this.fetchOnceWithCache<CARDS>('cards', this.cardsimgList, true);
+    }
     return this.cards$;
   }
 
-  getCardImg(): CARDS[] {
-    return this.cardsimgList;
+  /** Fetch home hero/carousel items once per session. */
+  getHomeObs$(): Observable<HOME[]> {
+    if (!this.home$) {
+      this.home$ = this.fetchOnceWithCache<HOME>('home', this.homeImgList);
+    }
+    return this.home$;
   }
 
-  updateCardImgObs(cardList: CARDS[]): Observable<boolean> {
-    const updatePromises: Promise<void>[] = [];
+  /** Fetch gallery 'image' collection items once per session. */
+  getImageObs$(): Observable<IMAGELST[]> {
+    if (!this.image$) {
+      this.image$ = this.fetchOnceWithCache<IMAGELST>('image', this.imageList);
+    }
+    return this.image$;
+  }
 
-    // Iterate over the local list which contains the 'id' field
-    this.cardsimgList.forEach((item: any) => {
-      if (item.color === "warn") {
-        const { id, ...data } = item;
-        
-        // Reset color to none
-        item.color = "none";
-        const updateData = { ...data, color: "none" };
+  /** Fetch gallery 'tiles' collection items once per session. */
+  getTilesObs$(): Observable<TILES[]> {
+    if (!this.tiles$) {
+      this.tiles$ = this.fetchOnceWithCache<TILES>('tiles', this.tilesImgList);
+    }
+    return this.tiles$;
+  }
 
-        if (id) {
-          updatePromises.push(this.CardsCol.doc(id).update(updateData));
-        }
+  /** Returns the set of image URLs favorited by the visitor in localStorage. */
+  getFavorites(): Set<string> {
+    try {
+      const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
+      if (!raw) {
+        return new Set<string>();
       }
-    });
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? new Set<string>(parsed) : new Set<string>();
+    } catch {
+      return new Set<string>();
+    }
+  }
 
-    if (updatePromises.length === 0) {
-      return of(true);
+  /** Toggles a card image URL in localStorage and returns the new favorited state. */
+  toggleFavorite(url: string): boolean {
+    const favorites = this.getFavorites();
+    const isNowFavorited = !favorites.has(url);
+    if (isNowFavorited) {
+      favorites.add(url);
+    } else {
+      favorites.delete(url);
+    }
+    try {
+      localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify([...favorites]));
+    } catch {
+      // Ignore storage quota / privacy mode errors
+    }
+    return isNowFavorited;
+  }
+
+  openSnackBar(message: string): void {
+    this._snackBar.open(message, '', {
+      duration: 1000,
+    });
+  }
+
+  private fetchOnceWithCache<T>(
+    collectionName: string,
+    targetList: T[],
+    includeId = false,
+  ): Observable<T[]> {
+    const cached = this.bypassCacheOnReload ? null : this.readSessionCache<T>(collectionName);
+    if (cached) {
+      targetList.length = 0;
+      targetList.push(...cached);
+      return of(cached);
     }
 
-    return from(Promise.all(updatePromises)).pipe(
-      map(() => true),
-      catchError(err => {
-        console.error("Error updating cards:", err);
-        return of(false);
-      })
+    const fetcher = this.customFetcher ?? this.defaultFirestoreFetcher;
+
+    // One-time REST read via firestore/lite avoids persistent WebSocket snapshot listeners.
+    return from(fetcher<T>(collectionName, includeId)).pipe(
+      tap((items) => {
+        targetList.length = 0;
+        targetList.push(...items);
+        this.writeSessionCache(collectionName, items);
+      }),
+      catchError((error) => {
+        console.error(`Error fetching ${collectionName}:`, error);
+        return of([] as T[]);
+      }),
+      shareReplay(1),
     );
   }
 
-  openSnackBar(message: string) {
-    this._snackBar.open(message, "", {
-      duration: 1000
+  private defaultFirestoreFetcher: FirestoreCollectionFetcher = async <T>(
+    collectionName: string,
+    includeId: boolean,
+  ): Promise<T[]> => {
+    const app = getApps().length ? getApp() : initializeApp(environment.firebase);
+    const db = getFirestore(app);
+    const snapshot = await getDocs(collection(db, collectionName));
+    return snapshot.docs.map((doc) => {
+      const data = doc.data() as T;
+      return includeId ? ({ ...data, id: doc.id } as T) : data;
     });
+  };
+
+  private readSessionCache<T>(key: string): T[] | null {
+    try {
+      const raw = sessionStorage.getItem(SESSION_CACHE_PREFIX + key);
+      if (!raw) {
+        return null;
+      }
+      const payload = JSON.parse(raw) as CachedPayload<T>;
+      if (!payload || !Array.isArray(payload.data)) {
+        return null;
+      }
+      if (Date.now() - payload.timestamp > CACHE_TTL_MS) {
+        sessionStorage.removeItem(SESSION_CACHE_PREFIX + key);
+        return null;
+      }
+      return payload.data;
+    } catch {
+      return null;
+    }
   }
 
-  // --- Utils ---
-  getMobileOperatingSystem() {
-    var userAgent = navigator.vendor;
-    if (/windows phone|window|android/i.test(navigator.userAgent)) {
-      return "WIN";
+  private writeSessionCache<T>(key: string, data: T[]): void {
+    try {
+      const payload: CachedPayload<T> = {
+        timestamp: Date.now(),
+        data,
+      };
+      sessionStorage.setItem(SESSION_CACHE_PREFIX + key, JSON.stringify(payload));
+    } catch {
+      // Ignore storage quota / privacy mode errors
     }
-    if (/iPad|iPhone|iPod/.test(userAgent)) {
-      return "iOS";
-    }
-    return "unknown";
   }
 
-  getMobileorDeskyopSystem() {
-    var userAgent = navigator.vendor;
-    if (/windows|window|/i.test(navigator.userAgent)) {
-      return "DESK";
+  private isPageReload(): boolean {
+    try {
+      const nav = performance.getEntriesByType('navigation')[0] as
+        | PerformanceNavigationTiming
+        | undefined;
+      return nav?.type === 'reload';
+    } catch {
+      return false;
     }
-    if (/phone|android|iPad|iPhone/i.test(navigator.userAgent)) {
-      return "PHN"
-    }
-    return "unknown";
   }
 }

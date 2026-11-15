@@ -1,49 +1,31 @@
-import { NgModule, Optional } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { environment } from 'src/environments/environment.prod';
-
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
-import { AngularFireStorageModule } from '@angular/fire/compat/storage';
-
 import { MaterialModule } from './material/material.module';
-
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-
+import { AppComponent, BottomSheet, barcodeDialog } from './app.component';
 import { HomeComponent } from './home/home.component';
-import { GalleryComponent } from './gallery/gallery.component';
+import { GalleryComponent, PhotoDialog } from './gallery/gallery.component';
 import { AboutComponent } from './about/about.component';
-import { barcodeDialog } from './app.component';
-import { NotFoundComponentComponent } from './not-found-component/not-found-component.component';
-import { OfflineComponent } from './not-found-component/not-found-component.component';
-import { BottomSheet } from './app.component';
-import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import {
+  NotFoundComponentComponent,
+  OfflineComponent,
+} from './not-found-component/not-found-component.component';
+
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     barcodeDialog,
     GalleryComponent,
+    PhotoDialog,
     AboutComponent,
     NotFoundComponentComponent,
     OfflineComponent,
     BottomSheet,
   ],
-  imports: [
-    BrowserModule,
-    MaterialModule,
-    AppRoutingModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFireStorageModule,
-    AngularFirestoreModule,
-    MatBottomSheetModule,
-  ],
+  imports: [BrowserModule, MaterialModule, AppRoutingModule],
   providers: [],
   bootstrap: [AppComponent],
-  schemas: [],
 })
-export class AppModule {
-  constructor() {}
-}
+export class AppModule {}
